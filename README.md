@@ -66,20 +66,25 @@ Tests run: 70, Failures: 0, Errors: 0, Skipped: 0
 
 ### Computing Code Coverage
 
+1. Compute **Ja**va **Co**de **Co**verage (*JaCoCo*):
+    - `mvn org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report`
+2. Watch the results on the generated web page:
+    - [target/site/jacoco/index.html](target/site/jacoco/index.html)
+
+![](./docs/jacoco.png)
+
+### Running SonarQube analysis
+
 To run a standard analysis using SonarQube, run the following commands:
 
 1. Starting SonarQube (requires Docker):
     - `docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:lts`
-2. Instrument the **Ja**va code for **Co**de **Co**verage (*JaCoCo*):
-    - `mvn org.jacoco:jacoco-maven-plugin:prepare-agent package`
-3. Push the data to SonarQube for analysis:
+2. Push the data to SonarQube for analysis:
     - `mvn sonar:sonar`
-4. Watch the results through the web interface:
+3. Watch the results through the web interface:
     - [http://localhost:9000/](http://localhost:9000/)
 
 ![](./docs/sonarqube-global.png)
-
-![](./docs/sonarqube-coverage.png)
 
 
 ### Using PIT for mutation testing
