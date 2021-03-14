@@ -1,0 +1,52 @@
+@startuml
+!include ./_commons.style
+
+
+package mutations {
+    abstract Mutator<Element> {
+      + mutate(p: Program, howMany: Int)
+      # getFinder(): Finder<Element>
+      # getRewriter(): Rewriter<Element>
+    }
+}
+
+Runner *--> "*" Mutator
+
+package finders {
+    interface Finder<Element> {
+        + findCandidates(p: Program, howMany: Int): Element[*]
+    }
+
+    class ObjectReturn {
+    }
+
+    class BinaryOperator {
+        + target: BinaryOperatorKind
+    }
+
+    Finder <|.. ObjectReturn
+    Finder <|.. BinaryOperator
+
+}
+
+package rewriters {
+    abstract Rewriter<Element> {
+        + rewrite(elements: Element[*]): Trace[*]
+        # rewrite(element: Element): Trace
+    }
+
+    class ReturnNull
+
+    class ChangeBinaryOperator {
+        + target: BinaryOperatorKind
+    }
+
+
+    Rewriter <|-- ReturnNull
+    Rewriter <|-- ChangeBinaryOperator
+}
+
+Finder <- Mutator
+Mutator -> Rewriter
+
+@enduml

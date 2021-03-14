@@ -1,0 +1,52 @@
+@startuml
+!include ./_commons.style
+
+
+package mutations {
+    abstract Mutator<Element> {
+      + mutate(p: Program, howMany: Int)
+      # getFinder(): Finder<Element>
+      # getRewriter(): Rewriter<Element>
+    }
+
+    class IntroduceNullPointer<Return> {
+        # getFinder(): Finder<Element>
+        # getRewriter(): Rewriter<Element>
+    }
+    Mutator <|-- IntroduceNullPointer
+}
+
+ObjectReturn . IntroduceNullPointer
+IntroduceNullPointer . ReturnNull
+
+Runner *--> "*" Mutator
+
+package finders {
+    interface Finder<Element> {
+        + findCandidates(p: Program, howMany: Int): Element[*]
+    }
+
+    class ObjectReturn<Return> {
+        + findCandidates(...)
+    }
+
+    Finder <|.. ObjectReturn
+
+}
+
+package rewriters {
+    abstract Rewriter<Element> {
+        + rewrite(elements: Element[*]): Trace[*]
+        # rewrite(element: Element): Trace
+    }
+
+    class ReturnNull<Return> {
+        # rewrite(element: Element): Trace
+    }
+    Rewriter <|-- ReturnNull
+}
+
+Finder <- Mutator
+Mutator -> Rewriter
+
+@enduml

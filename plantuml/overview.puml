@@ -1,0 +1,53 @@
+@startuml
+!include ./_commons.style
+
+class Main {
+ + {static} main(args: String[*])
+}
+
+class Runner {
++ this(path: String, howMany: int, id: String)
+--
++ run()
+- randomMutation(): Mutator
+}
+
+Main --> Runner
+
+package mutations {
+    abstract Mutator<Element> {
+      + mutate(p: Program, howMany: Int)
+      # getFinder(): Finder<Element>
+      # getRewriter(): Rewriter<Element>
+    }
+}
+
+Runner *-> "*" Mutator
+
+package finders {
+    interface Finder<Element> {
+        + findCandidates(p: Program, howMany: Int): Element[*]
+    }
+}
+
+package rewriters {
+    abstract Rewriter<Element> {
+        + rewrite(elements: Element[*]): Trace[*]
+        # rewrite(element: Element): Trace
+    }
+
+    class Trace {
+        + rewriterName: String
+        + file: String
+        + line: Int
+        + column: Int
+    }
+
+    Rewriter .. Trace
+
+}
+
+Mutator --> Finder
+Mutator --> Rewriter
+
+@enduml

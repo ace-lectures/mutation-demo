@@ -1,0 +1,66 @@
+@startuml
+!include ./_commons.style
+
+participant "_: Main"             as Main
+
+
+
+[-> Main: main(args)
+activate Main
+    create "_: Runner" as Runner
+
+    participant "m: Mutator"  as M
+    participant "_: Finder"   as F
+    participant "_: Rewriter" as R
+
+    Main -> Runner: this(...)
+    activate Runner
+        create "p: Program" as P
+        Runner -> P: this(...)
+        Runner --> Main
+    deactivate Runner
+
+
+
+    Main -> Runner: run()
+    activate Runner
+        Runner -> Runner: randomMutation(): m
+
+        Runner -> M: mutate(p, howMany)
+        activate M
+            M -> F: findCandidates(p, howMany)
+            activate F
+                F -> P: query(...)
+                activate P
+                    P --> F: elements
+                deactivate P
+                F --> M: elements
+            deactivate F
+            M -> R: rewrite(elements)
+            activate R
+                loop forall e in elements
+                    R -> R: rewrite(e)
+                    activate R
+                    R -> P: replace(...)
+                    activate P
+                        P --> R
+                    deactivate P
+                    create "_: Trace" as T
+                    R -> T: this(...)
+                    T --> R:
+                    deactivate R
+                end
+                R --> M: traces
+            deactivate R
+            M --> Runner: traces
+        deactivate M
+        Runner --> Main
+    deactivate Runner
+
+
+
+[<--Main:
+deactivate Main
+
+
+@enduml
