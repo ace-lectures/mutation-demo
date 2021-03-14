@@ -69,7 +69,7 @@ Tests run: 70, Failures: 0, Errors: 0, Skipped: 0
 1. Compute **Ja**va **Co**de **Co**verage (*JaCoCo*):
     - `mvn org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report`
 2. Watch the results on the generated web page:
-    - [target/site/jacoco/index.html](target/site/jacoco/index.html)
+    - `target/site/jacoco/index.html`
 
 ![](./docs/jacoco.png)
 
