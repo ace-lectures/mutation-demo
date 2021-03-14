@@ -653,7 +653,7 @@ Bourne Shell                     1              9              0             65
 
 ## Step 7: Introducing other mutations
 
-It is now possible to introduce more mutators inside our framework, using the `Finder` and `Rewriter` abstractions defined previously. We will assess that the `Finder's and `Rewriter's' APIs are generic enough and can be reused by different `Mutator's.
+It is now possible to introduce more mutators inside our framework, using the `Finder` and `Rewriter` abstractions defined previously. We will assess that the `Finder`s and `Rewriter`s' APIs are generic enough and can be reused by different `Mutator`s.
 
 Here are some example of `Mutator's that can be defined using our framework:
 
@@ -674,7 +674,7 @@ If you're interested in mutation testing, this is just the first step, i.e., ass
   - **Mutations selection**: for now, the tool applies each mutation independently. As a consequence, it might produce twice the same mutant. The mutations are also selected in a purely random way, leading to non-interesting mutants.
   - **Mutant equivalence**: When applying multiple mutations to the same program, we are not providing any guarantees for producing mutants that are not equivalent to the initial program. If not decidable in the general case (program equivalence is undecidable, it is a specific form of the halting problem), we can at least find a trade-off here to try not to generate equivalent programs on purpose. 
   - **Traceability**: we only trace which rewritings were applied and where. Adding extra semantics to this technical information and composing this source of information with the test coverage would allow one to know which mutation triggered which failure.
-  **Reporting**: We are using plain CSV documents to trace the mutation and describe the error for now. From an HCI point of view, finding a way to explore the results better, especially on significantly large software, would be beneficial.
+  - **Reporting**: We are using plain CSV documents to trace the mutation and describe the error for now. From an HCI point of view, finding a way to explore the results better, especially on significantly large software, would be beneficial.
   - **Performances**: the tooling relies on generating Maven projects and executing them independently. A better and more efficient approach would be to better integrate the mutations with the testing: in-memory testing (instead of generating Maven projects) and byte-code rewriting (instead of pretty-printing the whole application).
 
 
