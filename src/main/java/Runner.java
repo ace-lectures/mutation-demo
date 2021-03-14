@@ -1,7 +1,4 @@
-import mutators.FixCondition;
-import mutators.IntroduceNullPointer;
 import mutators.Mutator;
-import mutators.SwitchCondition;
 import rewriters.Trace;
 import spoon.Launcher;
 import spoon.MavenLauncher;
@@ -33,9 +30,7 @@ public class Runner {
 
     private Mutator<?> randomMutator() {
         List<Mutator<?>> available = new ArrayList<>();
-        available.add(new IntroduceNullPointer());
-        available.add(new SwitchCondition());
-        available.add(new FixCondition());
+        // Add available mutators here
         Collections.shuffle(available);
         return available.get(0);
     }
