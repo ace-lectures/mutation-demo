@@ -1,0 +1,105 @@
+Mutation Testing walkthrough
+
+# Switch to demo mode
+
+git checkout teaching
+
+# Content description
+
+Maven repository:
+  - mvn clean package
+  - mvn exec:java -Dexec.args="poker-hands-kata 10 demo"
+
+Throw an exception: no mutation available.
+
+Go through the classes contents:
+  - Main: CLI + running
+  - Runner: load the program + get a random mutator (that's why its exploding)
+  - mutator: apply a mutation
+  - Finder: select location where to apply a rewriting
+  - Rewriter: do the rewrite.
+  - Trace: data class to trace info + export to CSV (toString)
+
+# Create a new mutator
+
+## Create the ObjectReturn finder
+
+```
+public class ObjectReturn implements Finder<CtReturn<?>> {
+
+    @Override
+    public Set<CtReturn<?>> findCandidates(Launcher program, int howMany) {
+        List<CtReturn<?>> queried =
+                program.getModel().getRootPackage().filterChildren(
+                (CtReturn<?> r) -> !r.getReturnedExpression().getType().isPrimitive()
+        ).list();
+        Collections.shuffle(queried);
+        return queried.stream().limit(howMany).collect(Collectors.toSet());
+    }
+}
+```
+
+## Create the Return null rewriter
+
+```
+public class ReturnNull extends Rewriter<CtReturn<?>> {
+    @Override
+    protected void rewrite(CtReturn<?> e, Factory factory) {
+        CtCodeSnippetStatement snippet = factory.Core().createCodeSnippetStatement();
+        snippet.setValue("return null");
+        e.replace(snippet);
+    }
+
+    @Override
+    protected String getName() {
+        return "ReturnNull";
+    }
+}
+```
+
+## Create the introduce null pointer mutator
+
+```
+public class IntroduceNullPointer extends Mutator<CtReturn<?>> {
+    @Override
+    protected Finder<CtReturn<?>> getFinder() {
+        return new ObjectReturn();
+    }
+
+    @Override
+    protected Rewriter<CtReturn<?>> getRewriter() {
+        return new ReturnNull();
+    }
+}
+```
+
+
+## Register the mutation inside the runner:
+
+```
+private Mutator<?> randomMutator() {
+        List<Mutator<?>> available = new ArrayList<>();
+        // Add available mutators here
+        available.add(new IntroduceNullPointer());
+        Collections.shuffle(available);
+        return available.get(0);
+}
+```
+
+# Execute the transformation
+
+mvn clean package
+mvn exec:java -Dexec.args="poker-hands-kata 10 demo"
+
+
+Go to a rewritten location in the original source code
+
+Find the equivalent location (line number might have changed) in the spooned directory
+
+
+# Explore other mutations
+
+Git checkout master
+
+
+
