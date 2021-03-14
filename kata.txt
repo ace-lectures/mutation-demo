@@ -99,7 +99,11 @@ Find the equivalent location (line number might have changed) in the spooned dir
 
 # Explore other mutations
 
-Git checkout master
+git clean -n
+git clean -f
+git checkout master
 
+
+Explore the code of the other available mutations.
 
 
