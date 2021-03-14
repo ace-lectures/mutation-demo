@@ -69,13 +69,13 @@ Tests run: 70, Failures: 0, Errors: 0, Skipped: 0
 To run a standard analysis using SonarQube, run the following commands:
 
 1. Starting SonarQube (requires Docker):
-  - `docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:lts`
+    - `docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:lts`
 2. Instrument the **Ja**va code for **Co**de **Co**verage (*JaCoCo*):
-  - `mvn org.jacoco:jacoco-maven-plugin:prepare-agent package`
+    - `mvn org.jacoco:jacoco-maven-plugin:prepare-agent package`
 3. Push the data to SonarQube for analysis:
-  - `mvn sonar:sonar`
+    - `mvn sonar:sonar`
 4. Watch the results through the web interface:
-  - [http://localhost:9000/](http://localhost:9000/)
+    - [http://localhost:9000/](http://localhost:9000/)
 
 ![](./docs/sonarqube-global.png)
 
@@ -105,19 +105,19 @@ To get a better view of the result, open the report in the `target/pit-report` d
 
 To build our framework, we need:
 
-  - R1: to keep it simple from a technological point of view;
-  - R2: to apply mutations to Java code (_e.g._, a maven project)
-  - R3: to create multiple mutants for the same project
-  - R4: to control the amount of mutation in each mutant
-  - R5: to trace the mutations
-  - R6: to execute the test suite on the mutants
-  - R7: to aggregate the results of the tests for each mutant
+  - `R1`: to keep it simple from a technological point of view;
+  - `R2`: to apply mutations to Java code (_e.g._, a maven project)
+  - `R3`: to create multiple mutants for the same project
+  - `R4`: to control the amount of mutation in each mutant
+  - `R5`: to trace the mutations
+  - `R6`: to execute the test suite on the mutants
+  - `R7`: to aggregate the results of the tests for each mutant
 
 
 Based on these requirements, we design our framework as the following:
 
-  - A Java tool (R1) to mutate a Maven project (R2), controlling the number of mutations (R4) and tracing them (R5);
-  - A shell script (R1) to orchestrate the previous tool (R3), the test execution from the command line (R6) and the aggregation of results (R7).
+  - A Java tool (`R1`) to mutate a Maven project (`R2`), controlling the number of mutations (`R4`) and tracing them (`R5`);
+  - A shell script (`R1`) to orchestrate the previous tool (`R3`), the test execution from the command line (`R6`) and the aggregation of results (`R7`).
 
 ## Step 3: Designing the mutation tool
 
@@ -198,7 +198,7 @@ We can now import the project in our favourite IDE as a Maven project.
 
 ### Create class `Main`
 
-```
+```java
 public class Main {
     
     public static void main(String[] args) {
@@ -216,7 +216,7 @@ public class Main {
 
 ### Create class `Runner`
 
-```
+```java
 public class Runner {
 
     private String project;
@@ -248,7 +248,7 @@ public class Runner {
 
 ### Create abstract class `Mutator`
 
-```
+```java
 public abstract class Mutator<Element extends CtElement> {
 
     public Set<Trace> mutate(Launcher program, int howMany){
@@ -263,7 +263,7 @@ public abstract class Mutator<Element extends CtElement> {
 
 ### Create interface `Finder`
 
-```
+```java
 public interface Finder<Element extends CtElement> {
 
     public Set<Element> findCandidates(Launcher program, int howMany);
@@ -272,7 +272,7 @@ public interface Finder<Element extends CtElement> {
 
 ### Create abstract class `Rewriter`
 
-```
+```java
 public abstract class Rewriter<Element extends CtElement> {
 
     public Set<Trace> rewrite(Set<Element> found, Factory factory) {
@@ -289,7 +289,7 @@ public abstract class Rewriter<Element extends CtElement> {
 
 ### Create class `Trace`
 
-```
+```java
 public class Trace {
 
     private final String rewriter;
@@ -350,7 +350,7 @@ The intention is the following:
 
 ### Creating the `ObjectReturn` finder
 
-```
+```java
 public class ObjectReturn implements Finder<CtReturn<?>> {
 
     @Override
@@ -367,7 +367,7 @@ public class ObjectReturn implements Finder<CtReturn<?>> {
 
 ### Creating the `ReturnNull` rewriter
 
-```
+```java
 public class ReturnNull extends Rewriter<CtReturn<?>> {
     @Override
     protected void rewrite(CtReturn<?> e, Factory factory) {
@@ -386,7 +386,7 @@ public class ReturnNull extends Rewriter<CtReturn<?>> {
 
 ### Creating and registering the `IntroduceNullPointer` mutator
 
-```
+```java
 public class IntroduceNullPointer extends Mutator<CtReturn<?>> {
     @Override
     protected Finder<CtReturn<?>> getFinder() {
@@ -402,7 +402,7 @@ public class IntroduceNullPointer extends Mutator<CtReturn<?>> {
 
 We can now _register_ this mutation in the `Runner` to make it available.
 
-```
+```java
 public class Runner {
     // ...
     private Mutator<?> randomMutator() {
@@ -483,7 +483,7 @@ mosser@loki mutation-demo % chmod u+x prof-x.sh
 
 Create the orchestration skeleton:
 
-```
+```bash
 #!/usr/bin/env bash
 
 ORIGINAL=$1
@@ -503,7 +503,7 @@ function main()
 
 We will store the mutants in a directory named ... `mutants`.
 
-```
+```bash
 function prepare_environment()
 {
   rm -rf spooned;
@@ -515,7 +515,7 @@ function prepare_environment()
 
 We will create as many mutants as necessary:
 
-```
+```bash
 function prepare_mutants()
 {
   echo -e "# Preparing Mutants \n"
@@ -529,7 +529,7 @@ function prepare_mutants()
 
 To create a mutant, we copy the original project and replace the copied source code with the one located in the `spooned` directory after our rewriting tool's execution.
 
-```
+```bash
 function prepare_a_mutant() # $1: mutant id
 {
   cp -r $ORIGINAL "mutants/mutant_$1"
@@ -542,7 +542,7 @@ function prepare_a_mutant() # $1: mutant id
 
 #### Run the tests on each mutant
 
-```
+```bash
 function run_tests_on_mutants()
 {
   echo -e "\n# Testing Mutants"
@@ -577,7 +577,7 @@ To do this, as bash is a constraint (limit the technological stack), we have to 
   - `cut` to select the subpart of the line that includes the information we are looking for
   - a combination of `paste` and `bc` to sum all the results.
 
-```
+```bash
 function extract_results()
 {
   echo -e "\n# Extracting results \n"
@@ -653,7 +653,7 @@ Bourne Shell                     1              9              0             65
 
 ## Step 7: Introducing other mutations
 
-It is now possible to introduce more mutators inside our framework, using the `Finder` and `Rewriter` abstractions defined previously. We will assess that the `Finder's and `Rewriter's' APIs are generic enough and can be reused by different `Mutator's.
+It is now possible to introduce more mutators inside our framework, using the `Finder` and `Rewriter` abstractions defined previously. We will assess that the `Finder`s and `Rewriter`s' APIs are generic enough and can be reused by different `Mutator`s.
 
 Here are some example of `Mutator's that can be defined using our framework:
 
@@ -674,7 +674,7 @@ If you're interested in mutation testing, this is just the first step, i.e., ass
   - **Mutations selection**: for now, the tool applies each mutation independently. As a consequence, it might produce twice the same mutant. The mutations are also selected in a purely random way, leading to non-interesting mutants.
   - **Mutant equivalence**: When applying multiple mutations to the same program, we are not providing any guarantees for producing mutants that are not equivalent to the initial program. If not decidable in the general case (program equivalence is undecidable, it is a specific form of the halting problem), we can at least find a trade-off here to try not to generate equivalent programs on purpose. 
   - **Traceability**: we only trace which rewritings were applied and where. Adding extra semantics to this technical information and composing this source of information with the test coverage would allow one to know which mutation triggered which failure.
-  **Reporting**: We are using plain CSV documents to trace the mutation and describe the error for now. From an HCI point of view, finding a way to explore the results better, especially on significantly large software, would be beneficial.
+  - **Reporting**: We are using plain CSV documents to trace the mutation and describe the error for now. From an HCI point of view, finding a way to explore the results better, especially on significantly large software, would be beneficial.
   - **Performances**: the tooling relies on generating Maven projects and executing them independently. A better and more efficient approach would be to better integrate the mutations with the testing: in-memory testing (instead of generating Maven projects) and byte-code rewriting (instead of pretty-printing the whole application).
 
 
