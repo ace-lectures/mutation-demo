@@ -230,7 +230,8 @@ public class Runner {
     }
 
     public void run() {
-        Launcher program = new MavenLauncher(project, MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+        Launcher program = new MavenLauncher(project, 
+	                      MavenLauncher.SOURCE_TYPE.APP_SOURCE);
         program.buildModel();
         
         Mutator<?> mutator = randomMutator();
