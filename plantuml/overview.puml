@@ -48,6 +48,6 @@ package rewriters {
 }
 
 Mutator --> Finder
-Mutator --> Rewriter
+Mutator -> Rewriter
 
 @enduml
