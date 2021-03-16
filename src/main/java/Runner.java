@@ -1,3 +1,4 @@
+import mutators.IntroduceNullPointer;
 import mutators.Mutator;
 import rewriters.Trace;
 import spoon.Launcher;
@@ -31,6 +32,7 @@ public class Runner {
     private Mutator<?> randomMutator() {
         List<Mutator<?>> available = new ArrayList<>();
         // Add available mutators here
+        available.add(new IntroduceNullPointer());
         Collections.shuffle(available);
         return available.get(0);
     }

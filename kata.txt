@@ -4,6 +4,22 @@ Mutation Testing walkthrough
 
 git checkout teaching
 
+Clean package
+
+Jacoco
+
+mvn org.jacoco:jacoco-maven-plugin:prepare-agent \
+    package \
+    org.jacoco:jacoco-maven-plugin:report
+
+Open target/site/jacoco/index.html
+
+
+Pitest
+
+mvn org.pitest:pitest-maven:mutationCoverage
+
+
 # Content description
 
 Maven repository:
