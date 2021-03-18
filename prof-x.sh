@@ -52,20 +52,21 @@ function run_tests_on_mutants()
 function extract_results()
 {
   echo -e "# Extracting results \n"
-  echo "ID, Tests, Failures, Errors"
+
+  # Set length of the "Mutation:" column
+  # can be possibly computed automatically
+  LENGTH=15
+
+  # Print headers for results
+  printf "%-*s %-10s%-10s%-10s%-10s\n" $LENGTH "Mutation:" "Tests" "Failures" "Errors" "Skipped"
+
+  # Extract results from each mutation
   for m in mutants/mutant_*
   do
     cd $m || exit 1
-    TESTS=$(find target/surefire-reports -name '*.txt' | xargs grep "Tests run" \
-              | cut -d "," -f 1 | cut -d ':' -f 3 | paste -s -d+ - | bc
-    )
-    FAILURES=$(find target/surefire-reports -name '*.txt' | xargs grep "Tests run" \
-              | cut -d "," -f 2 | cut -d ':' -f 2 | paste -s -d+ - | bc
-    )
-    ERRORS=$(find target/surefire-reports -name '*.txt' | xargs grep "Tests run" \
-              | cut -d "," -f 3 | cut -d ':' -f 2 | paste -s -d+ - | bc
-    )
-    echo $m,$TESTS,$FAILURES,$ERRORS
+
+    # Print the result of each mutation
+    awk -v mut=$m -v len=$LENGTH -f awk_prog `find target/surefire-reports -name '*.txt'`
     cd $OLDPWD || exit 1
   done
 }

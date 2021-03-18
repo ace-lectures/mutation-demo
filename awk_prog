@@ -1,0 +1,31 @@
+# Usage: `awk -v mut=m -v len=n -f pattern file`
+# where m is the name of the mutation
+# where n is the length of the file name
+
+BEGIN {
+    # Set field separator
+    FS=","
+}
+
+# Only print the data in the last line of each file
+ENDFILE {
+    # Print mutation name
+    printf("%-*s", len, mut)
+
+    # Print data extracted from fields
+    # For each field, extract the value
+    for (i = 1; i <= NF; i++) {
+
+        # Split the `i`th field at the ':' to extract the number
+        # Store the result in an array `a`
+        split($i, a, ":")
+
+        # Print the data
+        printf("%-10s", a[2])
+
+        # If the it the last field, print a new line
+        if (i == NF) {
+            printf "\n"
+        }
+    }
+}
